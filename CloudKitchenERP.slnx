@@ -1,0 +1,10 @@
+<Solution>
+  <Project Path="CloudKitchenERP.API/CloudKitchenERP.API.csproj" />
+  <Project Path="CloudKitchenERP.Application/CloudKitchenERP.Application.csproj" />
+  <Project Path="CloudKitchenERP.Contracts/CloudKitchenERP.Contracts.csproj" />
+  <Project Path="CloudKitchenERP.Domain/CloudKitchenERP.Domain.csproj" />
+  <Project Path="CloudKitchenERP.Infrastructure/CloudKitchenERP.Infrastructure.csproj" />
+  <Project Path="CloudKitchenERP.Persistence/CloudKitchenERP.Persistence.csproj" />
+  <Project Path="CloudKitchenERP.Shared/CloudKitchenERP.Shared.csproj" />
+  <Project Path="CloudKitchenERP.Tests/CloudKitchenERP.Tests.csproj" />
+</Solution>
