@@ -24,7 +24,6 @@
     <Folder Include="Abstractions\" />
     <Folder Include="Behaviors\" />
     <Folder Include="Features\Authentication\" />
-    <Folder Include="Mappings\" />
   </ItemGroup>
 
 </Project>

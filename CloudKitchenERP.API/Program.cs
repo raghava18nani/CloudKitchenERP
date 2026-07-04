@@ -1,13 +1,14 @@
 using CloudKitchenERP.API.Middleware;
+using CloudKitchenERP.Application.Mappings;
+using CloudKitchenERP.Application.Validators.Authentication;
 using CloudKitchenERP.Infrastructure.DependencyInjection;
 using CloudKitchenERP.Persistence.DependencyInjection;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
-using FluentValidation;
-using FluentValidation.AspNetCore;
-using CloudKitchenERP.Application.Validators.Authentication;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
@@ -40,6 +41,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 builder.Services.AddPersistence(builder.Configuration);
 builder.Services.AddInfrastructure();
+
+builder.Services.AddAutoMapper(typeof(CategoryProfile));
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
