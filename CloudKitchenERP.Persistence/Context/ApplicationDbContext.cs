@@ -1,12 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using CloudKitchenERP.Domain.Entities;
+using Microsoft.EntityFrameworkCore;
 
-namespace CloudKitchenERP.Persistence.Context
+namespace CloudKitchenERP.Persistence.Context;
+
+public class ApplicationDbContext : DbContext
 {
-    internal class ApplicationDbContext
+    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+        : base(options)
     {
+    }
+
+    public DbSet<User> Users => Set<User>();
+
+    public DbSet<Role> Roles => Set<Role>();
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        base.OnModelCreating(modelBuilder);
     }
 }
