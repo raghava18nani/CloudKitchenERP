@@ -7,10 +7,14 @@ namespace CloudKitchenERP.Infrastructure.Authentication;
 public class AuthenticationService : IAuthenticationService
 {
     private readonly IUserRepository _userRepository;
+    private readonly IJwtTokenGenerator _jwtTokenGenerator;
 
-    public AuthenticationService(IUserRepository userRepository)
+    public AuthenticationService(
+        IUserRepository userRepository,
+        IJwtTokenGenerator jwtTokenGenerator)
     {
         _userRepository = userRepository;
+        _jwtTokenGenerator = jwtTokenGenerator;
     }
 
     public async Task<RegisterResponse> RegisterAsync(RegisterRequest request)
@@ -55,6 +59,57 @@ public class AuthenticationService : IAuthenticationService
         {
             Success = true,
             Message = "Registration successful."
+        };
+    }
+
+    public async Task<LoginResponse> LoginAsync(LoginRequest request)
+    {
+        var user = await _userRepository.GetByEmailAsync(request.Email);
+
+        if (user == null)
+        {
+            return new LoginResponse
+            {
+                Success = false,
+                Message = "Invalid email or password."
+            };
+        }
+
+        bool isPasswordValid = BCrypt.Net.BCrypt.Verify(
+            request.Password,
+            user.PasswordHash);
+
+        if (!isPasswordValid)
+        {
+            return new LoginResponse
+            {
+                Success = false,
+                Message = "Invalid email or password."
+            };
+        }
+
+        return new LoginResponse
+        {
+            Success = true,
+            Message = "Login successful.",
+            Token = _jwtTokenGenerator.GenerateToken(user)
+        };
+    }
+
+    public async Task<CurrentUserResponse?> GetCurrentUserAsync(int userId)
+    {
+        var user = await _userRepository.GetByIdWithRoleAsync(userId);
+
+        if (user == null)
+            return null;
+
+        return new CurrentUserResponse
+        {
+            Id = user.Id,
+            Name = $"{user.FirstName} {user.LastName}",
+            Email = user.Email ?? "",
+            MobileNumber = user.MobileNumber,
+            Role = user.Role.Name
         };
     }
 }

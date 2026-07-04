@@ -27,6 +27,7 @@ public class UserRepository : IUserRepository
     public async Task<User?> GetByEmailAsync(string email)
     {
         return await _context.Users
+            .Include(x => x.Role)
             .FirstOrDefaultAsync(x => x.Email == email);
     }
 
@@ -38,5 +39,19 @@ public class UserRepository : IUserRepository
     public async Task SaveChangesAsync()
     {
         await _context.SaveChangesAsync();
+    }
+
+    public async Task<User?> GetByIdAsync(int id)
+    {
+        return await _context.Users
+            .Include(x => x.Role)
+            .FirstOrDefaultAsync(x => x.Id == id);
+    }
+
+    public async Task<User?> GetByIdWithRoleAsync(int id)
+    {
+        return await _context.Users
+            .Include(x => x.Role)
+            .FirstOrDefaultAsync(x => x.Id == id);
     }
 }

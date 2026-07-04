@@ -13,4 +13,7 @@ public interface IUserRepository
     Task AddAsync(User user);
 
     Task SaveChangesAsync();
+    Task<User?> GetByIdAsync(int id);
+
+    Task<User?> GetByIdWithRoleAsync(int id);
 }
