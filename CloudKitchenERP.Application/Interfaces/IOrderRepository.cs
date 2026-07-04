@@ -1,4 +1,5 @@
 ﻿using CloudKitchenERP.Domain.Entities;
+using CloudKitchenERP.Domain.Enums;
 
 namespace CloudKitchenERP.Application.Interfaces;
 
@@ -14,4 +15,10 @@ public interface IOrderRepository
     Task<string> GenerateOrderNumberAsync();
 
     Task AddOrderItemAsync(OrderItem orderItem);
+
+    Task<List<Order>> GetAllOrdersAsync();
+
+    Task<List<Order>> GetOrdersByStatusAsync(OrderStatus status);
+
+    Task UpdateOrderAsync(Order order);
 }

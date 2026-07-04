@@ -114,14 +114,59 @@ public class OrderService : IOrderService
             throw;
         }
     }
-    public Task<List<OrderResponse>> GetMyOrdersAsync(int userId)
+    public async Task<List<OrderResponse>> GetMyOrdersAsync(int userId)
     {
-        throw new NotImplementedException();
+        var orders = await _orderRepository.GetOrdersByUserIdAsync(userId);
+
+        return orders.Select(order => new OrderResponse
+        {
+            Id = order.Id,
+            OrderNumber = order.OrderNumber,
+            Status = order.Status,
+            PaymentMethod = order.PaymentMethod,
+            PaymentStatus = order.PaymentStatus,
+            OrderDate = order.OrderDate,
+            GrandTotal = order.GrandTotal,
+
+            Items = order.OrderItems.Select(item => new OrderItemResponse
+            {
+                MenuItemName = item.MenuItem.Name,
+                Quantity = item.Quantity,
+                UnitPrice = item.UnitPrice,
+                TotalPrice = item.TotalPrice
+            }).ToList()
+
+        }).ToList();
     }
 
-    public Task<OrderResponse?> GetByIdAsync(int userId, int orderId)
+    public async Task<OrderResponse?> GetByIdAsync(int userId, int orderId)
     {
-        throw new NotImplementedException();
+        var order = await _orderRepository.GetOrderByIdAsync(orderId);
+
+        if (order == null)
+            return null;
+
+        if (order.UserId != userId)
+            return null;
+
+        return new OrderResponse
+        {
+            Id = order.Id,
+            OrderNumber = order.OrderNumber,
+            Status = order.Status,
+            PaymentMethod = order.PaymentMethod,
+            PaymentStatus = order.PaymentStatus,
+            OrderDate = order.OrderDate,
+            GrandTotal = order.GrandTotal,
+
+            Items = order.OrderItems.Select(item => new OrderItemResponse
+            {
+                MenuItemName = item.MenuItem.Name,
+                Quantity = item.Quantity,
+                UnitPrice = item.UnitPrice,
+                TotalPrice = item.TotalPrice
+            }).ToList()
+        };
     }
 
     public Task<bool> UpdateStatusAsync(UpdateOrderStatusRequest request)

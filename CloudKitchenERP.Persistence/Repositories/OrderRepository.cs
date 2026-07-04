@@ -1,5 +1,6 @@
 ﻿using CloudKitchenERP.Application.Interfaces;
 using CloudKitchenERP.Domain.Entities;
+using CloudKitchenERP.Domain.Enums;
 using CloudKitchenERP.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
 
@@ -51,5 +52,31 @@ public class OrderRepository : IOrderRepository
     public async Task AddOrderItemAsync(OrderItem orderItem)
     {
         await _context.OrderItems.AddAsync(orderItem);
+    }
+    public async Task<List<Order>> GetAllOrdersAsync()
+    {
+        return await _context.Orders
+            .Include(x => x.User)
+            .Include(x => x.OrderItems)
+            .ThenInclude(x => x.MenuItem)
+            .OrderByDescending(x => x.OrderDate)
+            .ToListAsync();
+    }
+
+    public async Task<List<Order>> GetOrdersByStatusAsync(OrderStatus status)
+    {
+        return await _context.Orders
+            .Include(x => x.User)
+            .Include(x => x.OrderItems)
+            .ThenInclude(x => x.MenuItem)
+            .Where(x => x.Status == status)
+            .OrderByDescending(x => x.OrderDate)
+            .ToListAsync();
+    }
+
+    public Task UpdateOrderAsync(Order order)
+    {
+        _context.Orders.Update(order);
+        return Task.CompletedTask;
     }
 }
