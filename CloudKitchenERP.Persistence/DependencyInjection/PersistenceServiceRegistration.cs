@@ -19,6 +19,8 @@ public static class PersistenceServiceRegistration
                 configuration.GetConnectionString("DefaultConnection")));
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<ICategoryRepository, CategoryRepository>();
+        services.AddScoped<IMenuItemRepository, MenuItemRepository>();
+        services.AddScoped<ICustomerRepository, CustomerRepository>();
         return services;
     }
 }

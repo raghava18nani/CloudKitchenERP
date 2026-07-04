@@ -1,8 +1,6 @@
-﻿using CloudKitchenERP.Domain.Common;
+﻿namespace CloudKitchenERP.Contracts.MenuItem;
 
-namespace CloudKitchenERP.Domain.Entities;
-
-public class MenuItem : BaseEntity
+public class CreateMenuItemRequest
 {
     public int CategoryId { get; set; }
 
@@ -23,6 +21,4 @@ public class MenuItem : BaseEntity
     public bool IsBestSeller { get; set; }
 
     public bool IsTodaySpecial { get; set; }
-
-    public Category Category { get; set; } = null!;
 }

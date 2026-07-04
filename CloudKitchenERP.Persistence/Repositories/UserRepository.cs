@@ -54,4 +54,5 @@ public class UserRepository : IUserRepository
             .Include(x => x.Role)
             .FirstOrDefaultAsync(x => x.Id == id);
     }
+  
 }

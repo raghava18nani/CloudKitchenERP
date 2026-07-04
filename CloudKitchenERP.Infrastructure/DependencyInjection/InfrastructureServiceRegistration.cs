@@ -12,6 +12,8 @@ public static class InfrastructureServiceRegistration
         services.AddScoped<IAuthenticationService, AuthenticationService>();
         services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
         services.AddScoped<ICategoryService, CategoryService>();
+        services.AddScoped<IMenuItemService, MenuItemService>();
+        services.AddScoped<ICustomerService, CustomerService>();
         return services;
     }
 }

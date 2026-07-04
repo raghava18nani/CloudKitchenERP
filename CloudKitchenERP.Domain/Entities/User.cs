@@ -25,4 +25,5 @@ public class User : BaseEntity
     public Role Role { get; set; } = null!;
 
     public ICollection<RefreshToken> RefreshTokens { get; set; } = new List<RefreshToken>();
+    public Customer? Customer { get; set; }
 }

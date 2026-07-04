@@ -1,9 +1,9 @@
-﻿using CloudKitchenERP.Domain.Common;
+﻿namespace CloudKitchenERP.Contracts.MenuItem;
 
-namespace CloudKitchenERP.Domain.Entities;
-
-public class MenuItem : BaseEntity
+public class UpdateMenuItemRequest
 {
+    public int Id { get; set; }
+
     public int CategoryId { get; set; }
 
     public string Name { get; set; } = string.Empty;
@@ -14,7 +14,7 @@ public class MenuItem : BaseEntity
 
     public bool IsVeg { get; set; }
 
-    public bool IsAvailable { get; set; } = true;
+    public bool IsAvailable { get; set; }
 
     public int PreparationTime { get; set; }
 
@@ -23,6 +23,4 @@ public class MenuItem : BaseEntity
     public bool IsBestSeller { get; set; }
 
     public bool IsTodaySpecial { get; set; }
-
-    public Category Category { get; set; } = null!;
 }
