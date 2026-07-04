@@ -42,7 +42,6 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 builder.Services.AddPersistence(builder.Configuration);
 builder.Services.AddInfrastructure();
 
-builder.Services.AddAutoMapper(typeof(CategoryProfile));
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>

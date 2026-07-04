@@ -18,20 +18,27 @@ public class ExceptionMiddleware
         {
             await _next(context);
         }
-        catch (Exception)
+        //catch (Exception)
+        //{
+        //    context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+        //    context.Response.ContentType = "application/json";
+
+        //    var response = new
+        //    {
+        //        Success = false,
+        //        Message = "An unexpected error occurred.",
+        //        StatusCode = 500
+        //    };
+
+        //    await context.Response.WriteAsync(
+        //        JsonSerializer.Serialize(response));
+        //}
+        catch (Exception ex)
         {
-            context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-            context.Response.ContentType = "application/json";
+            context.Response.StatusCode = 500;
+            context.Response.ContentType = "text/plain";
 
-            var response = new
-            {
-                Success = false,
-                Message = "An unexpected error occurred.",
-                StatusCode = 500
-            };
-
-            await context.Response.WriteAsync(
-                JsonSerializer.Serialize(response));
+            await context.Response.WriteAsync(ex.ToString());
         }
     }
 }

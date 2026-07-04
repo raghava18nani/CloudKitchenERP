@@ -1,7 +1,6 @@
 ﻿using CloudKitchenERP.Application.Interfaces;
 using CloudKitchenERP.Contracts.Category;
 using CloudKitchenERP.Domain.Entities;
-using CloudKitchenERP.Infrastructure.Services;
 
 namespace CloudKitchenERP.Infrastructure.Services;
 
