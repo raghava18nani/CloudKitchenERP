@@ -20,6 +20,10 @@ public class ApplicationDbContext : DbContext
     public DbSet<Cart> Carts => Set<Cart>();
 
     public DbSet<CartItem> CartItems => Set<CartItem>();
+
+    public DbSet<Order> Orders => Set<Order>();
+
+    public DbSet<OrderItem> OrderItems => Set<OrderItem>();
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -65,6 +69,45 @@ public class ApplicationDbContext : DbContext
 
         modelBuilder.Entity<CartItem>()
             .Property(ci => ci.TotalPrice)
+            .HasPrecision(18, 2);
+
+        modelBuilder.Entity<Order>()
+    .HasOne(o => o.User)
+    .WithMany(u => u.Orders)
+    .HasForeignKey(o => o.UserId);
+
+        modelBuilder.Entity<OrderItem>()
+            .HasOne(oi => oi.Order)
+            .WithMany(o => o.OrderItems)
+            .HasForeignKey(oi => oi.OrderId);
+
+        modelBuilder.Entity<OrderItem>()
+            .HasOne(oi => oi.MenuItem)
+            .WithMany(m => m.OrderItems)
+            .HasForeignKey(oi => oi.MenuItemId);
+
+        modelBuilder.Entity<Order>()
+            .Property(o => o.SubTotal)
+            .HasPrecision(18, 2);
+
+        modelBuilder.Entity<Order>()
+            .Property(o => o.DeliveryCharge)
+            .HasPrecision(18, 2);
+
+        modelBuilder.Entity<Order>()
+            .Property(o => o.Tax)
+            .HasPrecision(18, 2);
+
+        modelBuilder.Entity<Order>()
+            .Property(o => o.GrandTotal)
+            .HasPrecision(18, 2);
+
+        modelBuilder.Entity<OrderItem>()
+            .Property(o => o.UnitPrice)
+            .HasPrecision(18, 2);
+
+        modelBuilder.Entity<OrderItem>()
+            .Property(o => o.TotalPrice)
             .HasPrecision(18, 2);
     }
 }

@@ -15,6 +15,7 @@ public static class InfrastructureServiceRegistration
         services.AddScoped<IMenuItemService, MenuItemService>();
         services.AddScoped<ICustomerService, CustomerService>();
         services.AddScoped<ICartService, CartService>();
+        services.AddScoped<IOrderService, OrderService>();
         return services;
     }
 }

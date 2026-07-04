@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using CloudKitchenERP.Application.Interfaces;
 using CloudKitchenERP.Persistence.Repositories;
+using CloudKitchenERP.Persistence.Services;
 
 
 namespace CloudKitchenERP.Persistence.DependencyInjection;
@@ -22,6 +23,8 @@ public static class PersistenceServiceRegistration
         services.AddScoped<IMenuItemRepository, MenuItemRepository>();
         services.AddScoped<ICustomerRepository, CustomerRepository>();
         services.AddScoped<ICartRepository, CartRepository>();
+        services.AddScoped<IOrderRepository, OrderRepository>();
+        services.AddScoped<IUnitOfWork, UnitOfWork>();
         return services;
     }
 }

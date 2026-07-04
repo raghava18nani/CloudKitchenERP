@@ -27,4 +27,5 @@ public class User : BaseEntity
     public ICollection<RefreshToken> RefreshTokens { get; set; } = new List<RefreshToken>();
     public Customer? Customer { get; set; }
     public Cart? Cart { get; set; }
+    public ICollection<Order> Orders { get; set; } = new List<Order>();
 }

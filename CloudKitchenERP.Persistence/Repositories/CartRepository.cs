@@ -63,10 +63,21 @@ public class CartRepository : ICartRepository
     {
         await _context.SaveChangesAsync();
     }
+   
     public async Task<List<CartItem>> GetCartItemsAsync(int cartId)
     {
         return await _context.CartItems
+            .Include(x => x.MenuItem)
             .Where(x => x.CartId == cartId)
             .ToListAsync();
+    }
+
+    public async Task ClearCartAsync(int cartId)
+    {
+        var items = await _context.CartItems
+            .Where(x => x.CartId == cartId)
+            .ToListAsync();
+
+        _context.CartItems.RemoveRange(items);
     }
 }

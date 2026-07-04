@@ -20,4 +20,7 @@ public interface ICartRepository
 
     Task SaveChangesAsync();
     Task<List<CartItem>> GetCartItemsAsync(int cartId);
+
+
+    Task ClearCartAsync(int cartId);
 }

@@ -11,6 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\CloudKitchenERP.Domain\CloudKitchenERP.Domain.csproj" />
     <ProjectReference Include="..\CloudKitchenERP.Shared\CloudKitchenERP.Shared.csproj" />
   </ItemGroup>
 
