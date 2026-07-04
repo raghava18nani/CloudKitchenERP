@@ -25,4 +25,5 @@ public class MenuItem : BaseEntity
     public bool IsTodaySpecial { get; set; }
 
     public Category Category { get; set; } = null!;
+    public ICollection<CartItem> CartItems { get; set; } = new List<CartItem>();
 }
