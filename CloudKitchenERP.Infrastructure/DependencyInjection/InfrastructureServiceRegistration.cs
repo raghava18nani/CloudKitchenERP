@@ -1,6 +1,7 @@
 ﻿using CloudKitchenERP.Application.Interfaces;
 using CloudKitchenERP.Infrastructure.Authentication;
 using Microsoft.Extensions.DependencyInjection;
+using CloudKitchenERP.Infrastructure.Services;
 
 namespace CloudKitchenERP.Infrastructure.DependencyInjection;
 
@@ -10,6 +11,7 @@ public static class InfrastructureServiceRegistration
     {
         services.AddScoped<IAuthenticationService, AuthenticationService>();
         services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
+        services.AddScoped<ICategoryService, CategoryService>();
         return services;
     }
 }

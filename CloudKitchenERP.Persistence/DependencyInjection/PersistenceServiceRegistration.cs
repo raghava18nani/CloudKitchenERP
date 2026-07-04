@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using CloudKitchenERP.Application.Interfaces;
 using CloudKitchenERP.Persistence.Repositories;
 
+
 namespace CloudKitchenERP.Persistence.DependencyInjection;
 
 public static class PersistenceServiceRegistration
@@ -17,6 +18,7 @@ public static class PersistenceServiceRegistration
             options.UseSqlServer(
                 configuration.GetConnectionString("DefaultConnection")));
         services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<ICategoryRepository, CategoryRepository>();
         return services;
     }
 }

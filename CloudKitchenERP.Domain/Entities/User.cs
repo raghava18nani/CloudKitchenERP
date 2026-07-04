@@ -23,4 +23,6 @@ public class User : BaseEntity
     public DateTime? LastLogin { get; set; }
 
     public Role Role { get; set; } = null!;
+
+    public ICollection<RefreshToken> RefreshTokens { get; set; } = new List<RefreshToken>();
 }
