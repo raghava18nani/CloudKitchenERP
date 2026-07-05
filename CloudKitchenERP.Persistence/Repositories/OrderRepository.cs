@@ -79,4 +79,13 @@ public class OrderRepository : IOrderRepository
         _context.Orders.Update(order);
         return Task.CompletedTask;
     }
+
+    public async Task<Order?> GetOrderWithItemsAsync(int orderId)
+    {
+        return await _context.Orders
+            .Include(x => x.User)
+            .Include(x => x.OrderItems)
+                .ThenInclude(x => x.MenuItem)
+            .FirstOrDefaultAsync(x => x.Id == orderId);
+    }
 }

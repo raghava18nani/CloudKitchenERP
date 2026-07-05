@@ -77,6 +77,8 @@ builder.Services.AddSwaggerGen(options =>
         }
     });
 });
+
+QuestPDF.Settings.License = QuestPDF.Infrastructure.LicenseType.Community;
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())

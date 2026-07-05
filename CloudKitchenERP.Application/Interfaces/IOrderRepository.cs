@@ -21,4 +21,6 @@ public interface IOrderRepository
     Task<List<Order>> GetOrdersByStatusAsync(OrderStatus status);
 
     Task UpdateOrderAsync(Order order);
+
+    Task<Order?> GetOrderWithItemsAsync(int orderId);
 }
