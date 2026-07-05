@@ -1,4 +1,5 @@
-﻿using CloudKitchenERP.Domain.Entities;
+﻿using CloudKitchenERP.Contracts.MenuItem;
+using CloudKitchenERP.Domain.Entities;
 
 namespace CloudKitchenERP.Application.Interfaces;
 
@@ -15,4 +16,6 @@ public interface IMenuItemRepository
     Task DeleteAsync(MenuItem menuItem);
 
     Task SaveChangesAsync();
+
+    Task<(List<MenuItem> Items, int TotalRecords)> SearchAsync(MenuItemSearchRequest request);
 }

@@ -1,4 +1,5 @@
-﻿using CloudKitchenERP.Contracts.MenuItem;
+﻿using CloudKitchenERP.Contracts.Common;
+using CloudKitchenERP.Contracts.MenuItem;
 using System.IO;
 
 namespace CloudKitchenERP.Application.Interfaces;
@@ -16,4 +17,6 @@ public interface IMenuItemService
     Task<bool> DeleteAsync(int id);
 
     Task<bool> UpdateImageUrlAsync(int menuItemId, string imageUrl);
+
+    Task<PagedResponse<MenuItemResponse>> SearchAsync(MenuItemSearchRequest request);
 }

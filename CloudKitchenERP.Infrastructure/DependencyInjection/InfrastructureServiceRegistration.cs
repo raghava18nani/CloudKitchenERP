@@ -19,6 +19,7 @@ public static class InfrastructureServiceRegistration
         services.AddScoped<IAdminOrderService, AdminOrderService>();
         services.AddScoped<IDashboardService, DashboardService>();
         services.AddScoped<IInvoiceService, InvoiceService>();
+        services.AddScoped<IPaymentService, PaymentService>();
         return services;
     }
 }

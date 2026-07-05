@@ -88,4 +88,12 @@ public class OrderRepository : IOrderRepository
                 .ThenInclude(x => x.MenuItem)
             .FirstOrDefaultAsync(x => x.Id == orderId);
     }
+
+    public async Task<List<Order>> GetOrdersWithPaymentsAsync(int userId)
+    {
+        return await _context.Orders
+            .Where(x => x.UserId == userId)
+            .OrderByDescending(x => x.OrderDate)
+            .ToListAsync();
+    }
 }

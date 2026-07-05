@@ -23,4 +23,7 @@ public interface IOrderRepository
     Task UpdateOrderAsync(Order order);
 
     Task<Order?> GetOrderWithItemsAsync(int orderId);
+
+    Task<List<Order>> GetOrdersWithPaymentsAsync(int userId);
+
 }

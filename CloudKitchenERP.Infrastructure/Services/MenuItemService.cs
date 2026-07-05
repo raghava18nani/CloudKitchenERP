@@ -1,6 +1,7 @@
 ﻿using CloudKitchenERP.Application.Interfaces;
 using CloudKitchenERP.Contracts.MenuItem;
 using CloudKitchenERP.Domain.Entities;
+using CloudKitchenERP.Contracts.Common;
 
 namespace CloudKitchenERP.Infrastructure.Services;
 
@@ -153,5 +154,33 @@ public class MenuItemService : IMenuItemService
         await _repository.SaveChangesAsync();
 
         return true;
+    }
+
+    public async Task<PagedResponse<MenuItemResponse>> SearchAsync(MenuItemSearchRequest request)
+    {
+        var result = await _repository.SearchAsync(request);
+
+        return new PagedResponse<MenuItemResponse>
+        {
+            Data = result.Items.Select(x => new MenuItemResponse
+            {
+                Id = x.Id,
+                CategoryId = x.CategoryId,
+                CategoryName = x.Category.Name,
+                Name = x.Name,
+                Description = x.Description,
+                Price = x.Price,
+                IsVeg = x.IsVeg,
+                IsAvailable = x.IsAvailable,
+                PreparationTime = x.PreparationTime,
+                ImageUrl = x.ImageUrl,
+                IsBestSeller = x.IsBestSeller,
+                IsTodaySpecial = x.IsTodaySpecial
+            }).ToList(),
+
+            TotalRecords = result.TotalRecords,
+            PageNumber = request.PageNumber,
+            PageSize = request.PageSize
+        };
     }
 }

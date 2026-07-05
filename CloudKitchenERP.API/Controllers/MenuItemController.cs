@@ -124,4 +124,11 @@ public class MenuItemController : ControllerBase
             ImageUrl = imageUrl
         });
     }
+
+    [HttpGet("search")]
+    public async Task<IActionResult> Search([FromQuery] MenuItemSearchRequest request)
+    {
+        var result = await _menuItemService.SearchAsync(request);
+        return Ok(result);
+    }
 }
