@@ -2,7 +2,7 @@
 using CloudKitchenERP.Contracts.MenuItem;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-
+using Microsoft.AspNetCore.Http;
 namespace CloudKitchenERP.API.Controllers;
 
 [ApiController]
@@ -71,5 +71,57 @@ public class MenuItemController : ControllerBase
             return NotFound();
 
         return NoContent();
+    }
+
+    [Authorize(Roles = "Admin")]
+    [HttpPost("{id}/upload-image")]
+    public async Task<IActionResult> UploadImage(
+    int id,
+    IFormFile image)
+    {
+        if (image == null || image.Length == 0)
+            return BadRequest("Please select an image.");
+
+        // Allow only image files
+        var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".webp" };
+
+        var extension = Path.GetExtension(image.FileName).ToLower();
+
+        if (!allowedExtensions.Contains(extension))
+            return BadRequest("Only JPG, JPEG, PNG and WEBP images are allowed.");
+
+        // Maximum 5 MB
+        if (image.Length > 5 * 1024 * 1024)
+            return BadRequest("Image size cannot exceed 5 MB.");
+
+        var fileName = $"{Guid.NewGuid()}{extension}";
+
+        var folder = Path.Combine(
+            Directory.GetCurrentDirectory(),
+            "wwwroot",
+            "images",
+            "menu");
+
+        if (!Directory.Exists(folder))
+            Directory.CreateDirectory(folder);
+
+        var filePath = Path.Combine(folder, fileName);
+
+        using (var stream = new FileStream(filePath, FileMode.Create))
+        {
+            await image.CopyToAsync(stream);
+        }
+
+        var imageUrl = $"/images/menu/{fileName}";
+
+        var success = await _menuItemService.UpdateImageUrlAsync(id, imageUrl);
+
+        if (!success)
+            return NotFound("Menu item not found.");
+
+        return Ok(new
+        {
+            ImageUrl = imageUrl
+        });
     }
 }

@@ -139,4 +139,19 @@ public class MenuItemService : IMenuItemService
 
         return true;
     }
+
+    public async Task<bool> UpdateImageUrlAsync(int menuItemId, string imageUrl)
+    {
+        var menuItem = await _repository.GetByIdAsync(menuItemId);
+
+        if (menuItem == null)
+            return false;
+
+        menuItem.ImageUrl = imageUrl;
+
+        await _repository.UpdateAsync(menuItem);
+        await _repository.SaveChangesAsync();
+
+        return true;
+    }
 }
