@@ -54,5 +54,11 @@ public class UserRepository : IUserRepository
             .Include(x => x.Role)
             .FirstOrDefaultAsync(x => x.Id == id);
     }
-  
+
+    public async Task<User?> GetByMobileAsync(string mobileNumber)
+    {
+        return await _context.Users
+            .FirstOrDefaultAsync(x => x.MobileNumber == mobileNumber);
+    }
+
 }

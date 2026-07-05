@@ -1,8 +1,9 @@
 ﻿using CloudKitchenERP.Application.Interfaces;
 using CloudKitchenERP.Contracts.Authentication;
+using CloudKitchenERP.Domain.Enums;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
-using Microsoft.AspNetCore.Authorization;
 namespace CloudKitchenERP.API.Controllers;
 
 [ApiController]
@@ -10,10 +11,14 @@ namespace CloudKitchenERP.API.Controllers;
 public class AuthController : ControllerBase
 {
     private readonly IAuthenticationService _authenticationService;
+    private readonly IOtpService _otpService;
 
-    public AuthController(IAuthenticationService authenticationService)
+    public AuthController(
+       IAuthenticationService authenticationService,
+       IOtpService otpService)
     {
         _authenticationService = authenticationService;
+        _otpService = otpService;
     }
 
     [HttpPost("register")]
@@ -62,5 +67,64 @@ public class AuthController : ControllerBase
         }
 
         return Ok(user);
+    }
+
+    [HttpPost("send-otp")]
+    public async Task<IActionResult> SendOtp(SendOtpRequest request)
+    {
+        await _otpService.SendOtpAsync(
+            request.MobileNumber,
+            request.Purpose);
+
+        return Ok(new
+        {
+            Message = "OTP sent successfully."
+        });
+    }
+
+    [HttpPost("verify-otp")]
+    public async Task<IActionResult> VerifyOtp(VerifyOtpRequest request)
+    {
+        var success = await _otpService.VerifyOtpAsync(
+            request.MobileNumber,
+            request.Otp,
+            request.Purpose);
+
+        if (!success)
+            return BadRequest(new
+            {
+                Message = "Invalid or expired OTP."
+            });
+
+        return Ok(new
+        {
+            Message = "OTP verified successfully."
+        });
+    }
+
+    [HttpPost("resend-otp")]
+    public async Task<IActionResult> ResendOtp(SendOtpRequest request)
+    {
+        await _otpService.ResendOtpAsync(
+            request.MobileNumber,
+            request.Purpose);
+
+        return Ok(new
+        {
+            Message = "OTP resent successfully."
+        });
+    }
+
+    [HttpPost("reset-password")]
+    public async Task<IActionResult> ResetPassword(
+    ResetPasswordRequest request)
+    {
+        var success =
+            await _authenticationService.ResetPasswordAsync(request);
+
+        if (!success)
+            return BadRequest("OTP verification required.");
+
+        return Ok("Password changed successfully.");
     }
 }

@@ -16,4 +16,5 @@ public interface IUserRepository
     Task<User?> GetByIdAsync(int id);
 
     Task<User?> GetByIdWithRoleAsync(int id);
+    Task<User?> GetByMobileAsync(string mobileNumber);
 }

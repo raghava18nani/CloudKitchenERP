@@ -26,6 +26,7 @@ public static class PersistenceServiceRegistration
         services.AddScoped<IOrderRepository, OrderRepository>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddScoped<IDashboardRepository, DashboardRepository>();
+        services.AddScoped<IOtpRepository, OtpRepository>();
         return services;
     }
 }

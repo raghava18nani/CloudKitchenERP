@@ -20,6 +20,8 @@ public static class InfrastructureServiceRegistration
         services.AddScoped<IDashboardService, DashboardService>();
         services.AddScoped<IInvoiceService, InvoiceService>();
         services.AddScoped<IPaymentService, PaymentService>();
+        services.AddScoped<ISmsService, MockSmsService>();
+        services.AddScoped<IOtpService, OtpService>();
         return services;
     }
 }

@@ -1,6 +1,7 @@
 ﻿using CloudKitchenERP.Application.Interfaces;
 using CloudKitchenERP.Contracts.Authentication;
 using CloudKitchenERP.Domain.Entities;
+using CloudKitchenERP.Domain.Enums;
 
 namespace CloudKitchenERP.Infrastructure.Authentication;
 
@@ -8,13 +9,19 @@ public class AuthenticationService : IAuthenticationService
 {
     private readonly IUserRepository _userRepository;
     private readonly IJwtTokenGenerator _jwtTokenGenerator;
+    private readonly IOtpRepository _otpRepository;
+    private readonly IOtpService _otpService;
 
     public AuthenticationService(
         IUserRepository userRepository,
-        IJwtTokenGenerator jwtTokenGenerator)
+        IJwtTokenGenerator jwtTokenGenerator,
+        IOtpRepository otpRepository,
+        IOtpService otpService)
     {
         _userRepository = userRepository;
         _jwtTokenGenerator = jwtTokenGenerator;
+        _otpRepository = otpRepository;
+        _otpService = otpService;
     }
 
     public async Task<RegisterResponse> RegisterAsync(RegisterRequest request)
@@ -39,6 +46,18 @@ public class AuthenticationService : IAuthenticationService
             };
         }
 
+        bool verified = await _otpRepository.IsOtpVerifiedAsync(
+    request.MobileNumber,
+    OtpPurpose.Registration);
+
+        if (!verified)
+        {
+            return new RegisterResponse
+            {
+                Success = false,
+                Message = "Please verify your mobile number using OTP."
+            };
+        }
         var user = new User
         {
             FirstName = request.FirstName,
@@ -111,5 +130,29 @@ public class AuthenticationService : IAuthenticationService
             MobileNumber = user.MobileNumber,
             Role = user.Role.Name
         };
+    }
+
+    public async Task<bool> ResetPasswordAsync(ResetPasswordRequest request)
+    {
+        var user = await _userRepository
+            .GetByMobileAsync(request.MobileNumber);
+
+        if (user == null)
+            return false;
+
+        bool verified =
+            await _otpRepository.IsOtpVerifiedAsync(
+                request.MobileNumber,
+                OtpPurpose.ForgotPassword);
+
+        if (!verified)
+            return false;
+
+        user.PasswordHash =
+            BCrypt.Net.BCrypt.HashPassword(request.NewPassword);
+
+        await _userRepository.SaveChangesAsync();
+
+        return true;
     }
 }
