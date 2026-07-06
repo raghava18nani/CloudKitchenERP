@@ -12,18 +12,21 @@ public class OrderService : IOrderService
     private readonly IUnitOfWork _unitOfWork;
     private readonly IEmailService _emailService;
     private readonly IUserRepository _userRepository;
+    private readonly IInvoiceService _invoiceService;
     public OrderService(
      IOrderRepository orderRepository,
      ICartRepository cartRepository,
      IUnitOfWork unitOfWork,
      IEmailService emailService,
-     IUserRepository userRepository)
+     IUserRepository userRepository,
+     IInvoiceService invoiceService)
     {
         _orderRepository = orderRepository;
         _cartRepository = cartRepository;
         _unitOfWork = unitOfWork;
         _emailService = emailService;
         _userRepository = userRepository;
+        _invoiceService = invoiceService;
     }
 
     public async Task<OrderResponse> CheckoutAsync(int userId, CheckoutRequest request)
@@ -95,15 +98,29 @@ public class OrderService : IOrderService
             await _unitOfWork.SaveChangesAsync();
             await _unitOfWork.CommitTransactionAsync();
 
+
             var customer = await _userRepository.GetByIdAsync(userId);
 
             if (customer != null)
             {
+                // Order Confirmation Email
                 await _emailService.SendOrderConfirmationEmailAsync(
                     customer.Email,
                     customer.FirstName,
                     order.OrderNumber,
                     order.GrandTotal);
+
+                // Generate Invoice PDF
+                var invoicePdf = await _invoiceService.GenerateInvoiceAsync(
+                    userId,
+                    order.Id);
+
+                // Send Invoice Email
+                await _emailService.SendInvoiceEmailAsync(
+                    customer.Email,
+                    customer.FirstName,
+                    invoicePdf,
+                    order.OrderNumber);
             }
 
 

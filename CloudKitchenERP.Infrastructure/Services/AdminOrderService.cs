@@ -8,13 +8,18 @@ public class AdminOrderService : IAdminOrderService
 {
     private readonly IOrderRepository _orderRepository;
     private readonly IUnitOfWork _unitOfWork;
-
+    private readonly IUserRepository _userRepository;
+    private readonly IEmailService _emailService;
     public AdminOrderService(
         IOrderRepository orderRepository,
-        IUnitOfWork unitOfWork)
+        IUnitOfWork unitOfWork,
+        IUserRepository userRepository,
+        IEmailService emailService)
     {
         _orderRepository = orderRepository;
         _unitOfWork = unitOfWork;
+        _userRepository = userRepository;
+        _emailService = emailService;
     }
 
     public async Task<List<OrderResponse>> GetAllOrdersAsync()
@@ -73,11 +78,22 @@ public class AdminOrderService : IAdminOrderService
 
         if (order == null)
             return false;
-
         order.Status = request.Status;
 
         await _orderRepository.UpdateOrderAsync(order);
         await _unitOfWork.SaveChangesAsync();
+
+        // Send status email
+        var customer = await _userRepository.GetByIdAsync(order.UserId);
+
+        if (customer != null)
+        {
+            await _emailService.SendOrderStatusEmailAsync(
+                customer.Email,
+                customer.FirstName,
+                order.OrderNumber,
+                order.Status.ToString());
+        }
 
         return true;
     }

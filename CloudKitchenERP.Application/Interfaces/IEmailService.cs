@@ -26,4 +26,10 @@ public interface IEmailService
     string customerName,
     byte[] invoicePdf,
     string invoiceNumber);
+
+    Task SendOrderStatusEmailAsync(
+    string toEmail,
+    string customerName,
+    string orderNumber,
+    string status);
 }

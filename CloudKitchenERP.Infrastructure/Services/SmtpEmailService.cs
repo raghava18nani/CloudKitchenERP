@@ -231,4 +231,90 @@ public class SmtpEmailService : IEmailService
 
         await client.SendMailAsync(mail);
     }
+
+    public async Task SendOrderStatusEmailAsync(
+    string toEmail,
+    string customerName,
+    string orderNumber,
+    string status)
+    {
+        string subject = status switch
+        {
+            "Preparing" => "🍲 Your Order is Being Prepared",
+            "OutForDelivery" => "🚚 Your Order is Out for Delivery",
+            "Delivered" => "✅ Your Order has been Delivered",
+            "Cancelled" => "❌ Your Order has been Cancelled",
+            _ => "📦 Order Status Updated"
+        };
+
+        string message = status switch
+        {
+            "Preparing" =>
+                "Our kitchen has started preparing your delicious order.",
+
+            "OutForDelivery" =>
+                "Good news! Your order is on the way and will reach you soon.",
+
+            "Delivered" =>
+                "Your order has been delivered successfully. We hope you enjoy your meal!",
+
+            "Cancelled" =>
+                "Unfortunately, your order has been cancelled. If you have already made a payment, the refund will be processed as per our policy.",
+
+            _ =>
+                $"Your order status has been updated to <b>{status}</b>."
+        };
+
+        var body = $@"
+    <div style='font-family:Arial,sans-serif;
+                max-width:600px;
+                margin:auto;
+                border:1px solid #ddd;
+                border-radius:8px;
+                overflow:hidden;'>
+
+        <div style='background:#8B0000;
+                    color:white;
+                    padding:15px;
+                    text-align:center;'>
+
+            <h2 style='margin:0;'>🍲 Telugu Inti Ruchulu</h2>
+
+        </div>
+
+        <div style='padding:25px;'>
+
+            <p>Hello <b>{customerName}</b>,</p>
+
+            <p>{message}</p>
+
+            <p>
+                <b>Order Number:</b> {orderNumber}
+            </p>
+
+            <p>
+                <b>Current Status:</b> {status}
+            </p>
+
+            <br/>
+
+            <p>
+                Thank you for choosing
+                <b>Telugu Inti Ruchulu</b>.
+            </p>
+
+            <p>
+                Regards,<br/>
+                <b>Team Telugu Inti Ruchulu</b>
+            </p>
+
+        </div>
+
+    </div>";
+
+        await SendEmailAsync(
+            toEmail,
+            subject,
+            body);
+    }
 }
