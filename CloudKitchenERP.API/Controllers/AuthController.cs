@@ -12,13 +12,15 @@ public class AuthController : ControllerBase
 {
     private readonly IAuthenticationService _authenticationService;
     private readonly IOtpService _otpService;
+    private readonly IEmailService _emailService;
 
     public AuthController(
        IAuthenticationService authenticationService,
-       IOtpService otpService)
+       IOtpService otpService, IEmailService emailService)
     {
         _authenticationService = authenticationService;
         _otpService = otpService;
+        _emailService = emailService;
     }
 
     [HttpPost("register")]
@@ -73,8 +75,9 @@ public class AuthController : ControllerBase
     public async Task<IActionResult> SendOtp(SendOtpRequest request)
     {
         await _otpService.SendOtpAsync(
-            request.MobileNumber,
-            request.Purpose);
+     request.MobileNumber,
+     request.Email,
+     request.Purpose);
 
         return Ok(new
         {
@@ -106,8 +109,9 @@ public class AuthController : ControllerBase
     public async Task<IActionResult> ResendOtp(SendOtpRequest request)
     {
         await _otpService.ResendOtpAsync(
-            request.MobileNumber,
-            request.Purpose);
+       request.MobileNumber,
+       request.Email,
+       request.Purpose);
 
         return Ok(new
         {

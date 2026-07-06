@@ -8,16 +8,22 @@ public class OtpService : IOtpService
 {
     private readonly IOtpRepository _otpRepository;
     private readonly ISmsService _smsService;
-
+    private readonly IEmailService _emailService;
+    private readonly IUserRepository _userRepository;
     public OtpService(
         IOtpRepository otpRepository,
-        ISmsService smsService)
+        ISmsService smsService, IEmailService emailService, IUserRepository userRepository)
     {
         _otpRepository = otpRepository;
         _smsService = smsService;
+        _emailService = emailService;
+        _userRepository = userRepository;
     }
 
-    public async Task SendOtpAsync(string mobileNumber, OtpPurpose purpose)
+    public async Task SendOtpAsync(
+        string mobileNumber,
+        string? email,
+        OtpPurpose purpose)
     {
         var random = new Random();
 
@@ -37,6 +43,24 @@ public class OtpService : IOtpService
 
         await _otpRepository.AddAsync(entity);
         await _otpRepository.SaveChangesAsync();
+
+        string? emailToSend = email;
+
+        if (string.IsNullOrWhiteSpace(emailToSend))
+        {
+            var user = await _userRepository.GetByMobileAsync(mobileNumber);
+
+            emailToSend = user?.Email;
+        }
+
+        if (!string.IsNullOrWhiteSpace(emailToSend))
+        {
+            await _emailService.SendOtpEmailAsync(
+                emailToSend,
+                otp);
+        }
+
+   
 
         await _smsService.SendOtpAsync(mobileNumber, otp);
     }
@@ -77,9 +101,15 @@ public class OtpService : IOtpService
         return true;
     }
 
-    public async Task ResendOtpAsync(string mobileNumber, OtpPurpose purpose)
+    public async Task ResendOtpAsync(
+      string mobileNumber,
+      string? email,
+      OtpPurpose purpose)
     {
-        await SendOtpAsync(mobileNumber, purpose);
+        await SendOtpAsync(
+            mobileNumber,
+            email,
+            purpose);
     }
     // Methods will be added next...
 }

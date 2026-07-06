@@ -10,15 +10,20 @@ public class OrderService : IOrderService
     private readonly IOrderRepository _orderRepository;
     private readonly ICartRepository _cartRepository;
     private readonly IUnitOfWork _unitOfWork;
-
+    private readonly IEmailService _emailService;
+    private readonly IUserRepository _userRepository;
     public OrderService(
-        IOrderRepository orderRepository,
-        ICartRepository cartRepository,
-        IUnitOfWork unitOfWork)
+     IOrderRepository orderRepository,
+     ICartRepository cartRepository,
+     IUnitOfWork unitOfWork,
+     IEmailService emailService,
+     IUserRepository userRepository)
     {
         _orderRepository = orderRepository;
         _cartRepository = cartRepository;
         _unitOfWork = unitOfWork;
+        _emailService = emailService;
+        _userRepository = userRepository;
     }
 
     public async Task<OrderResponse> CheckoutAsync(int userId, CheckoutRequest request)
@@ -68,7 +73,7 @@ public class OrderService : IOrderService
                 DeliveryAddress = "" // We'll fetch this from Customer later
             };
 
-           
+
             // Step 5: Create Order Items
             await _orderRepository.AddOrderAsync(order);
             await _unitOfWork.SaveChangesAsync();
@@ -89,6 +94,18 @@ public class OrderService : IOrderService
             await _cartRepository.ClearCartAsync(cart.Id);
             await _unitOfWork.SaveChangesAsync();
             await _unitOfWork.CommitTransactionAsync();
+
+            var customer = await _userRepository.GetByIdAsync(userId);
+
+            if (customer != null)
+            {
+                await _emailService.SendOrderConfirmationEmailAsync(
+                    customer.Email,
+                    customer.FirstName,
+                    order.OrderNumber,
+                    order.GrandTotal);
+            }
+
 
             return new OrderResponse
             {

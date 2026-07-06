@@ -11,17 +11,19 @@ public class AuthenticationService : IAuthenticationService
     private readonly IJwtTokenGenerator _jwtTokenGenerator;
     private readonly IOtpRepository _otpRepository;
     private readonly IOtpService _otpService;
+    private readonly IEmailService _emailService;
 
     public AuthenticationService(
         IUserRepository userRepository,
         IJwtTokenGenerator jwtTokenGenerator,
         IOtpRepository otpRepository,
-        IOtpService otpService)
+        IOtpService otpService,IEmailService emailService)
     {
         _userRepository = userRepository;
         _jwtTokenGenerator = jwtTokenGenerator;
         _otpRepository = otpRepository;
         _otpService = otpService;
+        _emailService = emailService;
     }
 
     public async Task<RegisterResponse> RegisterAsync(RegisterRequest request)
@@ -73,7 +75,9 @@ public class AuthenticationService : IAuthenticationService
         user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password);
         await _userRepository.AddAsync(user);
         await _userRepository.SaveChangesAsync();
-
+        await _emailService.SendWelcomeEmailAsync(
+    user.Email,
+    user.FirstName);
         return new RegisterResponse
         {
             Success = true,
